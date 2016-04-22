@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry including="**/*.java" kind="src" path="src/main/java"/>
+	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.5/commons-codec-1.5.jar" sourcepath="M2_REPO/commons-codec/commons-codec/1.5/commons-codec-1.5-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/home/decoder/.m2/repository/commons-codec/commons-codec/1.5/commons-codec-1.5-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.5/commons-lang-2.5.jar" sourcepath="M2_REPO/commons-lang/commons-lang/2.5/commons-lang-2.5-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/home/decoder/.m2/repository/commons-lang/commons-lang/2.5/commons-lang-2.5-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="var" path="M2_REPO/commons-io/commons-io/2.0/commons-io-2.0.jar" sourcepath="M2_REPO/commons-io/commons-io/2.0/commons-io-2.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/home/decoder/.m2/repository/commons-io/commons-io/2.0/commons-io-2.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/usr/lib/jvm/java-8-oracle/jre/lib/ext/jfxrt.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/scream3r/jssc/2.8.0/jssc-2.8.0.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
