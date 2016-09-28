@@ -1,6 +1,7 @@
 package org.ssdev.WettkampfManager;
 
 import java.awt.List;
+import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -8,10 +9,18 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextFlow;
@@ -68,6 +77,32 @@ public class UIController {
     	lastName.setVisible(false);
     	lastTime.setVisible(false);
     	
+    	results.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+    			@Override
+    			public void handle(KeyEvent event) {
+    				if (event.getCode() == KeyCode.F2) {
+	    				Result selectedResult = results.getSelectionModel().getSelectedItem();
+	    				if (selectedResult == null) {
+	    					return;
+	    				}
+	    				
+	    				String selectedName = selectedResult.getNameProperty().getValue();
+	    				String selectedSeating = selectedResult.getSeatingProperty().getValue();
+	    				String selectedTable = selectedResult.getTableProperty().getValue();
+	    					    				
+	    				TextInputDialog dialog = new TextInputDialog(selectedName);
+	    				dialog.setTitle("Teilnehmer umbenennen");
+	    				dialog.setHeaderText("Tisch " + selectedTable + " Platz " + selectedSeating);
+	    				dialog.setContentText("Neuer Name für Teilnehmer:");
+	    				
+	    				Optional<String> result = dialog.showAndWait();
+	    				
+	    				if (result.isPresent()) {
+	    					SeatMap.getInstance().changeName(selectedTable, selectedSeating, result.get());
+	    				}
+    				}
+    			}
+    	});
     	
     }
 

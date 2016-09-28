@@ -128,14 +128,14 @@ public class Brain extends Thread {
 						}
 						
 						Integer rank = Integer.valueOf(parts[0]);
-						String name = "Unknown";
-						
 						
 						if (myResults.isEmpty() && rank != 1) {
 							/* Wait for a full resync if results is empty */
 							continue;
 						}
 						
+						String name = SeatMap.getInstance().getName(parts[1], parts[2]);
+
 						if (myResults.size() < rank) {
 							Result result = new Result(parts[0], name, parts[1], parts[2], parts[3]);
 							myResults.add(result);
