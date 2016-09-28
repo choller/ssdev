@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import jssc.SerialPort;
 import jssc.SerialPortException;
 
@@ -170,8 +174,10 @@ public class Brain extends Thread {
 				}	
 			}
 		} catch (SerialPortException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setContentText(e.getMessage());
+			Optional<ButtonType> result = alert.showAndWait();
+			Platform.exit();
 		}
 	}
 	
