@@ -14,6 +14,7 @@ import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
@@ -59,6 +60,18 @@ public class UIController {
 	
 	@FXML
 	private Label lastTime;
+	
+	@FXML
+	private MenuItem exportMenuItem;
+	
+	@FXML
+	private MenuItem nameImportMenuItem;
+	
+	@FXML
+	private MenuItem nameExportMenuItem;
+	
+	@FXML
+	private MenuItem closeMenuItem;
 	
     private Main myMain;
     
