@@ -1,7 +1,5 @@
 package org.ssdev.WettkampfManager;
 
-import java.awt.Event;
-import java.awt.List;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -26,21 +24,20 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class UIController {
@@ -91,7 +88,15 @@ public class UIController {
 	
     private Main myMain;
     
+    private Stage myPrimaryStage;
+    
     private BlockingQueue<Result> resultQueue = new LinkedBlockingQueue<Result>();
+    
+    private int myResultsSize = 12;
+    private int myTimeSize = 96;
+    private int myStateSize = 48;
+    private int myBannerSize = 96;
+    private double myScalingFactor = 1.0;
 
     public UIController() {}
 
@@ -236,14 +241,44 @@ public class UIController {
 		closeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
+				myMain.getBrain().shutdown();
 				Platform.exit();
 			}
 		});
-    	
     }
 
     public void setMainApp(Main main) {
         myMain = main;
+    }
+    
+    public void layoutLabelPane() {
+    	results.setStyle("-fx-font-size: " + (new Double(myResultsSize * myScalingFactor)).intValue() + "pt;");
+    	elapsedTime.setStyle("-fx-font-size: " + (new Double(myTimeSize * myScalingFactor)).intValue() + "pt;");
+    	maximumTime.setStyle("-fx-font-size: " + (new Double(myTimeSize * myScalingFactor)).intValue() + "pt;");
+    	brainState.setStyle("-fx-font-size: " + (new Double(myStateSize * myScalingFactor)).intValue() + "pt;");
+    	lastName.setStyle("-fx-font-size: " + (new Double(myBannerSize * myScalingFactor)).intValue() + "pt;");
+    	lastTime.setStyle("-fx-font-size: " + (new Double(myBannerSize * myScalingFactor)).intValue() + "pt;");
+    }
+    
+    public void setPrimaryStage(Stage primaryStage) {
+        myPrimaryStage = primaryStage;
+        
+        layoutLabelPane();
+    	
+    	myPrimaryStage.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				if (event.getCode() == KeyCode.PLUS) {
+					myScalingFactor += 0.5;
+					layoutLabelPane();
+				} else if (event.getCode() == KeyCode.MINUS) {
+					if (myScalingFactor > 0.5) {
+						myScalingFactor -= 0.5;
+						layoutLabelPane();
+					}
+				}
+			}
+    	});
     }
     
     public void setResults(ObservableList<Result> results) {
@@ -263,10 +298,10 @@ public class UIController {
     	
     	if (brainState.equals("SET_TIME")) {
     		this.brainState.setStyle("-fx-text-fill: red");
-    		this.brainState.setFont(Font.font(null, FontWeight.BOLD, 48));
+    		this.brainState.setFont(Font.font(null, FontWeight.BOLD, this.brainState.getFont().getSize()));
     	} else {
     		this.brainState.setStyle("-fx-text-fill: black");
-    		this.brainState.setFont(Font.font(null, FontWeight.NORMAL, 48));
+    		this.brainState.setFont(Font.font(null, FontWeight.NORMAL, this.brainState.getFont().getSize()));
     	}
     }
     
