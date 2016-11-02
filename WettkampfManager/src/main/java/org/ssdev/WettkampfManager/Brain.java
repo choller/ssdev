@@ -188,11 +188,12 @@ public class Brain extends Thread {
 							Result result = myResults.get(rank - 1);
 							
 							if (!result.getRankProperty().get().equals(parts[0])
-								|| !result.getNameProperty().get().equals(name)
 								|| !result.getTableProperty().get().equals(parts[1])
 								|| !result.getSeatingProperty().get().equals(parts[2])
 								|| !result.getTimeProperty().get().equals(parts[3])) {
 								myResults.clear();
+							} else if (!result.getNameProperty().get().equals(name)) {
+								result.updateNameProperty(name);
 							}
 						}
 						
