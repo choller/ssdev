@@ -37,4 +37,8 @@ public class Result {
 	public StringProperty getTimeProperty() {
 		return time;
 	}
+	
+	public void updateNameProperty(String newName) {
+		name.setValue(newName);
+	}
 }
