@@ -33,9 +33,11 @@ public class Brain extends Thread {
 	}
 	
 	public Brain(String serialPort, UIController uicontroller) throws SerialPortException {
-		myPort = new SerialPort(serialPort);
-		myPort.openPort();
-		myPort.setParams(SerialPort.BAUDRATE_115200, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+		if (!serialPort.isEmpty()) {
+			myPort = new SerialPort(serialPort);
+			myPort.openPort();
+			myPort.setParams(SerialPort.BAUDRATE_115200, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+		}
 		
 		myUIController = uicontroller;
 		
@@ -56,6 +58,37 @@ public class Brain extends Thread {
 			String lastTime = null;
 			
 			while(!myShutdown) {
+				if (myPort == null) {
+					// Enter Demo Mode
+					
+					if (myBrainState == null) {
+						myBrainState = "STOP";
+						
+						Result r1 = new Result("1", "demo1", "3", "5", "00:00:13");
+						Result r2 = new Result("2", "demo2", "1", "2", "00:01:27");
+						myResults.add(r1);
+						myResults.add(r2);
+						
+			            Platform.runLater(new Runnable() {
+			                @Override
+			                public void run() {
+			                	myUIController.queuePushDialog(r1);
+			                }
+			            });
+						
+			            Platform.runLater(new Runnable() {
+			                @Override
+			                public void run() {
+			                	myUIController.queuePushDialog(r2);
+			                }
+			            });
+					}
+					
+					IO.sleepSilent(100);
+		            continue;
+				}
+				
+				
 				int[] ca = myPort.readIntArray(1);
 				int c = ca[0];
 				
