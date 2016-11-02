@@ -15,18 +15,17 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import jssc.SerialPortException;
-import jssc.SerialPortList;
 
 public class Main extends Application {
 
     private Stage primaryStage;
-    private AnchorPane rootLayout;
+    private Pane rootLayout;
     
     protected Brain brain = null;
 
@@ -47,6 +46,16 @@ public class Main extends Application {
      */
     public void initRootLayout() {
         try {
+            Optional<String> result = null;
+            
+            do {
+            	TextInputDialog dialog = new TextInputDialog("Port auswählen");
+				dialog.setTitle("Port auswählen");
+				dialog.setHeaderText("Seriellen Port angeben (z.B. COM4 oder /dev/ttyUSB0)");
+				dialog.setContentText("Port für Verbindung:");
+				result = dialog.showAndWait();
+            } while(!result.isPresent());
+            
             // Load root layout from fxml file.
             FXMLLoader loader = new FXMLLoader();
             URL x = Main.class.getResource("/Main.fxml");
@@ -56,13 +65,16 @@ public class Main extends Application {
 
             // Show the scene containing the root layout.
             Scene scene = new Scene(rootLayout);
+            primaryStage.setMaximized(true);
+            primaryStage.setResizable(true);
             primaryStage.setScene(scene);
             primaryStage.show();
             
             UIController controller = loader.getController();
             controller.setMainApp(this);
+            controller.setPrimaryStage(primaryStage);
             
-            brain = new Brain("/dev/ttyUSB0", controller);
+            brain = new Brain(result.get(), controller);
             brain.start();
         } catch (IOException e) {
             e.printStackTrace();
