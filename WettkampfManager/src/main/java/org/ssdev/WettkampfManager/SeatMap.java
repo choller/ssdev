@@ -118,6 +118,18 @@ public class SeatMap {
 				this.changeName(table, seating, name);
 				cnt++;
 			}
+			
+			if (workbook.getNumberOfSheets() == 3) {
+				/* Sheet 2 contains unseated contestants,
+				 * Sheet 3 available seatings */
+				
+				// TODO: Compare sheet row sizes
+				
+				// TODO: Make random permutation of names, assign to seatings
+				
+				// TODO: Implement display method
+			}
+			
 			return cnt;
 		} finally {
 			myLock.writeLock().unlock();
