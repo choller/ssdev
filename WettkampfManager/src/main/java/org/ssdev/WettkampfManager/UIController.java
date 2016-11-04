@@ -241,7 +241,6 @@ public class UIController {
 		closeMenuItem.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				myMain.getBrain().shutdown();
 				Platform.exit();
 			}
 		});

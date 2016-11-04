@@ -10,6 +10,7 @@ import javax.comm.UnsupportedCommOperationException;*/
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -20,6 +21,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import jssc.SerialPortException;
 
 public class Main extends Application {
@@ -75,6 +77,12 @@ public class Main extends Application {
             controller.setPrimaryStage(primaryStage);
             
             brain = new Brain(result.get(), controller);
+            
+            /* 
+             * Don't bother cleaning up brain thread, it doesn't need
+             * any special care for shutting down
+             */
+            brain.setDaemon(true);
             brain.start();
         } catch (IOException e) {
             e.printStackTrace();

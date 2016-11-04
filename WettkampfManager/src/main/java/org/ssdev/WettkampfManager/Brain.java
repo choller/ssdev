@@ -1,14 +1,8 @@
 package org.ssdev.WettkampfManager;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
@@ -19,7 +13,6 @@ import jssc.SerialPortException;
 
 public class Brain extends Thread {
 	SerialPort myPort = null;
-	boolean myShutdown = false;
 	UIController myUIController = null;
 	
 	String myElapsedTime = null;
@@ -44,20 +37,13 @@ public class Brain extends Thread {
 		myUIController.setResults(myResults);
 	}
 	
-	public void shutdown() {
-		myShutdown = true;
-	}
-	
 	public void run() {
 		try {			
 			StringBuffer curLine = new StringBuffer(256);
-			
 			String statusLine = null;
-			boolean seenFirstTime = false;
-			
 			String lastTime = null;
 			
-			while(!myShutdown) {
+			while(true) {
 				if (myPort == null) {
 					// Enter Demo Mode
 					
