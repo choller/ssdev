@@ -1,19 +1,22 @@
 package org.ssdev.WettkampfManager;
 
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.apache.poi.hpsf.ReadingNotSupportedException;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-
-import javafx.beans.property.StringProperty;
 
 public class SeatMap {
 	private final Map<String, Map<String, String>> mySeatMap = new HashMap<String, Map<String, String>>();
@@ -106,27 +109,84 @@ public class SeatMap {
 		}
 	}
 	
+	protected static String getStringValue(Cell cell) {
+		cell.setCellType(1);
+		return cell.getStringCellValue();
+	}
+	
 	public int doExcelImport(HSSFWorkbook workbook) {
 		myLock.writeLock().lock();
 		int cnt = 0;
 		try {
 			HSSFSheet sheet = workbook.getSheetAt(0);
-			for (Row row : sheet) {		
-				String name = row.getCell(0).getStringCellValue();
-				String table = row.getCell(1).getStringCellValue();
-				String seating = row.getCell(2).getStringCellValue();
+			
+			// Memorize which seats are taken in case we need to auto-assign seats
+			HashMap<String, HashSet<String>> takenSeatings = new HashMap<String, HashSet<String>>();
+			HashSet<String> seatedNames = new HashSet<>();
+			
+			// Remove header row
+			sheet.removeRow(sheet.getRow(0));
+			
+			for (Row row : sheet) {
+				String name = getStringValue(row.getCell(0));
+				String table = getStringValue(row.getCell(1));
+				String seating = getStringValue(row.getCell(2));
 				this.changeName(table, seating, name);
 				cnt++;
+				
+				if (!takenSeatings.containsKey(table)) {
+					takenSeatings.put(table, new HashSet<String>());
+				}
+				takenSeatings.get(table).add(seating);
+				seatedNames.add(name);
 			}
-			
+
 			if (workbook.getNumberOfSheets() == 3) {
-				/* Sheet 2 contains unseated contestants,
-				 * Sheet 3 available seatings */
+				HSSFSheet contestantSheet = workbook.getSheetAt(1);
+				HSSFSheet seatingsSheet = workbook.getSheetAt(2);
 				
-				// TODO: Compare sheet row sizes
+				contestantSheet.removeRow(contestantSheet.getRow(0));
+				seatingsSheet.removeRow(seatingsSheet.getRow(0));
 				
-				// TODO: Make random permutation of names, assign to seatings
+				List<Integer> availableSeatsIdx = new ArrayList<Integer>();
+				List<String> availableContestants = new ArrayList<String>();
 				
+				int rowIdx = 1;
+				for (Row row : seatingsSheet) {
+					String table = getStringValue(row.getCell(0));
+					String seating = getStringValue(row.getCell(1));
+					
+					if (!takenSeatings.containsKey(table) || !takenSeatings.get(table).contains(seating)) {
+						availableSeatsIdx.add(rowIdx);
+					}
+					
+					rowIdx++;
+				}
+				
+				for (Row row : contestantSheet) {
+					String name = getStringValue(row.getCell(0));
+					if (!seatedNames.contains(name)) {
+						availableContestants.add(name);
+					}
+				}
+				
+				if (availableContestants.size() == availableSeatsIdx.size()) {
+				    SecureRandom random = new SecureRandom();
+					Collections.shuffle(availableSeatsIdx, random);		
+					
+					int listIdx = 0;
+					for (Integer seatIdx : availableSeatsIdx) {
+						System.err.println(seatIdx);
+						String table = getStringValue(seatingsSheet.getRow(seatIdx).getCell(0));
+						String seating = getStringValue(seatingsSheet.getRow(seatIdx).getCell(1));
+						this.changeName(table, seating, availableContestants.get(listIdx));
+						listIdx++;
+						cnt++;
+					}
+				} else {
+					System.err.println("Mismatch between constestants and seats");
+				}
+								
 				// TODO: Implement display method
 			}
 			
