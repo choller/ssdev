@@ -92,7 +92,7 @@ public class UIController {
     
     private BlockingQueue<Result> resultQueue = new LinkedBlockingQueue<Result>();
     
-    private int myResultsSize = 12;
+    private int myResultsSize = 18;
     private int myTimeSize = 96;
     private int myStateSize = 48;
     private int myBannerSize = 96;
